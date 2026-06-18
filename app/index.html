@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NISC App — __ENVIRONMENT__</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 3rem;
+            max-width: 600px;
+            text-align: center;
+        }
+        .env-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+        }
+        .env-dev { background: #1f6feb33; color: #58a6ff; border: 1px solid #1f6feb; }
+        .env-staging { background: #d2992233; color: #d29922; border: 1px solid #d29922; }
+        .env-production { background: #23883533; color: #3fb950; border: 1px solid #3fb950; }
+        h1 { font-size: 1.75rem; margin-bottom: 0.75rem; color: #f0f6fc; }
+        .meta { color: #8b949e; font-size: 0.875rem; margin-top: 1.5rem; }
+        .meta span { display: block; margin: 0.25rem 0; }
+        .version { color: #58a6ff; font-weight: 500; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="env-badge env-__ENVIRONMENT__">__ENVIRONMENT__</div>
+        <h1>NISC Deployment Demo</h1>
+        <p>This app was deployed via GitHub Actions using environment-specific configuration.</p>
+        <div class="meta">
+            <span>Version: <span class="version">__VERSION__</span></span>
+            <span>Deployed: __TIMESTAMP__</span>
+            <span>Commit: __SHA__</span>
+            <span>Region: __REGION__</span>
+        </div>
+    </div>
+</body>
+</html>
