@@ -1,0 +1,64 @@
+name: Reusable Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+        description: 'Target environment (dev, staging, production)'
+      version:
+        required: true
+        type: string
+        description: 'Application version to deploy'
+      region:
+        required: false
+        type: string
+        default: 'us-central-1'
+        description: 'Deployment region'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.environment }}
+      url: https://${{ inputs.environment }}.nisc-demo.example.com
+    concurrency:
+      group: deploy-${{ inputs.environment }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-${{ inputs.version }}
+          path: dist/
+
+      - name: Configure for environment
+        run: |
+          echo "⚙️  Configuring for ${{ inputs.environment }}..."
+          sed -i "s/__ENVIRONMENT__/${{ inputs.environment }}/g" dist/index.html
+          sed -i "s/__VERSION__/${{ inputs.version }}/g" dist/index.html
+          sed -i "s/__TIMESTAMP__/$(date -u '+%Y-%m-%d %H:%M UTC')/g" dist/index.html
+          sed -i "s/__SHA__/${GITHUB_SHA::7}/g" dist/index.html
+          sed -i "s/__REGION__/${{ inputs.region }}/g" dist/index.html
+
+      - name: Authenticate to cloud provider
+        run: |
+          echo "🔑 Authenticating to ${{ inputs.environment }} (${{ inputs.region }})..."
+          echo "   Using OIDC token (no stored secrets needed)"
+
+      - name: Deploy application
+        run: |
+          echo "🚀 Deploying v${{ inputs.version }} to ${{ inputs.environment }}..."
+          echo "   Region: ${{ inputs.region }}"
+          echo "   URL: https://${{ inputs.environment }}.nisc-demo.example.com"
+          sleep 2
+          echo "   ✅ Deployment successful"
+
+      - name: Verify deployment
+        run: |
+          echo "🔍 Verifying ${{ inputs.environment }} deployment..."
+          echo "   Health: ✅ 200 OK"
+          echo "   Version: ✅ ${{ inputs.version }}"

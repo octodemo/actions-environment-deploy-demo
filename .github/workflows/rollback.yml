@@ -1,0 +1,53 @@
+name: Rollback Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to rollback'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      version:
+        description: 'Version to rollback to (e.g., 1.0.0-abc1234)'
+        required: true
+        type: string
+      reason:
+        description: 'Reason for rollback'
+        required: true
+        type: string
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.environment }}
+    steps:
+      - name: Confirm rollback
+        run: |
+          echo "⚠️  ROLLBACK INITIATED"
+          echo "   Environment: ${{ inputs.environment }}"
+          echo "   Target version: ${{ inputs.version }}"
+          echo "   Reason: ${{ inputs.reason }}"
+          echo "   Initiated by: ${{ github.actor }}"
+
+      - name: Execute rollback
+        run: |
+          echo "🔄 Rolling back ${{ inputs.environment }} to v${{ inputs.version }}..."
+          sleep 3
+          echo "   ✅ Rollback complete"
+
+      - name: Verify rollback
+        run: |
+          echo "🔍 Verifying rollback..."
+          echo "   Current version: ${{ inputs.version }} ✅"
+          echo "   Health check: 200 OK ✅"
+
+      - name: Create incident record
+        run: |
+          echo "📋 Rollback recorded"
+          echo "   Actor: ${{ github.actor }}"
+          echo "   Time: $(date -u '+%Y-%m-%d %H:%M UTC')"
+          echo "   Reason: ${{ inputs.reason }}"
